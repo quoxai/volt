@@ -171,6 +171,8 @@ Example:
 - include **metadata**, not secrets
 - reference attachments via hashes rather than embedding raw output
 
+> **v0.1 scope note:** In v0.1, payloads are metadata-only — e.g., `payload_keys` (field names present in the original message), token counts, tool names, and exit codes. Full-content payloads (message text, raw tool output) are deferred to v0.2 and will require opt-in redaction support (§9) to be conformant.
+
 ---
 
 ## 7. Event hashing & chaining (normative)
@@ -783,6 +785,27 @@ Detailed guidance belongs in `PRIVACY_REDACTION.md` (Doc later), but these basel
 - AEE envelope/message identifiers SHOULD populate:
   - `context.aee_envelope_id`
   - `context.aee_message_id`
+
+### 22.1 Bridge activation model
+
+VOLT recording SHOULD be opt-in, controlled by host application settings. The recommended pattern is an **observer bridge** that:
+
+1. Subscribes to AEE envelope storage events and AOCL lifecycle signals.
+2. Maps AEE/AOCL events to VOLT trace events (see §8 for type mapping).
+3. Records events via the VOLT recorder, creating runs per correlation ID.
+4. Handles failures silently — bridge errors **MUST NOT** disrupt the AEE transport pipeline. Implementors SHOULD use fire-and-forget patterns with error logging.
+
+### 22.2 Bridge observability
+
+Implementations SHOULD expose operational counters for monitoring:
+
+- `events_recorded`: Total events successfully persisted.
+- `events_failed`: Total events that failed to persist.
+- `runs_started` / `runs_completed`: Run lifecycle counters.
+- `envelopes_processed`: Total AEE envelopes observed.
+- `enabled`: Whether the bridge is currently active.
+
+These counters aid debugging and provide confidence that the audit trail is functioning.
 
 ---
 

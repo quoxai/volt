@@ -7,6 +7,15 @@ This project follows a pragmatic versioning approach:
 - **Minor**: backwards-compatible additions
 - **Major**: breaking changes
 
+## [0.1.1] — 2026-02-28
+
+### Clarified
+- §6.3: v0.1 payloads are metadata-only (e.g., `payload_keys`, token counts, tool names). Full-content payloads (message text, tool output) are deferred to v0.2 with opt-in redaction.
+- §22: Added bridge activation model guidance — VOLT recording SHOULD be opt-in via host application settings, using an observer/hook pattern that does not couple the transport layer (AEE) to the audit layer (VOLT). Bridge failures MUST NOT disrupt the transport pipeline.
+
+### Added
+- §22: Bridge observability guidance — implementations SHOULD expose counters (events recorded, events failed, runs started/completed) for operational monitoring.
+
 ## [0.1.0] — 2026-02-28
 
 ### Added
