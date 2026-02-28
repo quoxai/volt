@@ -49,8 +49,8 @@ VOLT (evidence ledger + bundle + verification)
 ```
 
 ### Responsibilities (clear separation)
-- **AEE**: message format + correlation IDs for agent-to-agent and human-to-agent envelopes.
-- **AOCL**: orchestration control layers (policy decisions, permissions, HITL gates, escalation rules).
+- **[AEE](https://github.com/AdaminX/AEE-Agent-Envelope-Exchange)**: message format + correlation IDs for agent-to-agent and human-to-agent envelopes.
+- **[AOCL](https://github.com/AdaminX/AOCL-Agent-Orchestration-Control-Layers-Protocol)**: orchestration control layers (policy decisions, permissions, HITL gates, escalation rules).
 - **VOLT**: evidence recording + integrity guarantees + exportable bundles + verification.
 
 ### VOLT explicitly does NOT
