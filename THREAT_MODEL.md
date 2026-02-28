@@ -150,16 +150,16 @@ Each boundary is a place attackers may attempt tampering, substitution, or data 
 
 ### T9 — Incomplete evidence (missing coverage)
 **Attack:** A tool executes without VOLT hooks; evidence is incomplete.
-**Mitigation:** Not a cryptographic issue — it's integration discipline.
-**Mitigations:**
+**Mitigation:** Not a cryptographic issue — it is an integration discipline problem.
+**Recommended mitigations:**
 - enforce "tool calls must go through middleware" (hard requirement)
 - AOCL policy: deny execution if VOLT recorder not active
 - CI checks for required event types per run class (prod runs must include HITL)
 
 ### T10 — Privacy leakage via evidence bundles
-**Attack:** Sensitive data leaks because it got logged or exported.
-**Mitigation:** Privacy-first constraints + scanners + redaction policy.
-**Mitigations:**
+**Attack:** Sensitive data leaks because it was logged or exported.
+**Mitigation:** Privacy-first constraints, secret scanners, and redaction policy.
+**Recommended mitigations:**
 - secret scanning before write
 - strict export controls
 - role-based access to evidence viewers

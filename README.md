@@ -6,6 +6,8 @@ It produces **tamper-evident, portable, verifiable traces** of what happened dur
 
 If **AEE** is how agents communicate, and **AOCL** is how they're controlled, then **VOLT** is how you **prove** what actually happened.
 
+**IETF Internet-Draft:** [`draft-cowles-volt-00`](https://datatracker.ietf.org/doc/draft-cowles-volt/)
+
 ---
 
 ## Why VOLT exists
@@ -49,8 +51,8 @@ VOLT (evidence ledger + bundle + verification)
 ```
 
 ### Responsibilities (clear separation)
-- **[AEE](https://github.com/AdaminX/AEE-Agent-Envelope-Exchange)**: message format + correlation IDs for agent-to-agent and human-to-agent envelopes.
-- **[AOCL](https://github.com/AdaminX/AOCL-Agent-Orchestration-Control-Layers-Protocol)**: orchestration control layers (policy decisions, permissions, HITL gates, escalation rules).
+- **[AEE](https://github.com/quoxai/aee)**: message format + correlation IDs for agent-to-agent and human-to-agent envelopes.
+- **[AOCL](https://github.com/quoxai/aocl)**: orchestration control layers (policy decisions, permissions, HITL gates, escalation rules).
 - **VOLT**: evidence recording + integrity guarantees + exportable bundles + verification.
 
 ### VOLT explicitly does NOT
@@ -80,7 +82,7 @@ Each event is hashed and **linked to the previous event** (an append-only chain)
 A run can be exported as a bundle:
 - `manifest.json`
 - `events.ndjson`
-- optional `attachments/` (tool outputs, artefacts, snapshots)
+- optional `attachments/` (tool outputs, artifacts, snapshots)
 - optional redaction maps / signatures
 
 ### 3) Independent verification
@@ -139,20 +141,23 @@ Anyone can run verification on the bundle:
 - **Scope:** record → bundle → verify
 - **Roadmap:** deterministic replay harness, TraceQL queries, remote runner attestations, optional public anchoring
 
-See: `SPEC.md`, `EVIDENCE_BUNDLES.md`, `VERIFICATION.md`, `INTEGRATION.md`
+See: [SPEC.md](SPEC.md), [EVIDENCE_BUNDLES.md](EVIDENCE_BUNDLES.md), [VERIFICATION.md](VERIFICATION.md), [INTEGRATION.md](INTEGRATION.md)
 
 ---
 
 ## Documents
 
-- **SPEC.md** — normative protocol spec (schema, hashing, chaining, versioning)
-- **EVIDENCE_BUNDLES.md** — bundle layout, attachments, retention
-- **VERIFICATION.md** — verifier algorithm + report format
-- **INTEGRATION.md** — how VOLT hooks into AEE + AOCL + tool execution
-- **PRIVACY_REDACTION.md** — logging safety + redaction rules
-- **THREAT_MODEL.md** — what VOLT mitigates and what it cannot
-- **WORKED_EXAMPLES.md** — end-to-end sample runs
-- **ROADMAP.md** — v0.2+ features and explicit non-goals
+- **[SPEC.md](SPEC.md)** — normative protocol spec (schema, hashing, chaining, versioning)
+- **[EVIDENCE_BUNDLES.md](EVIDENCE_BUNDLES.md)** — bundle layout, attachments, retention
+- **[VERIFICATION.md](VERIFICATION.md)** — verifier algorithm + report format
+- **[INTEGRATION.md](INTEGRATION.md)** — how VOLT hooks into AEE + AOCL + tool execution
+- **[PRIVACY_REDACTION.md](PRIVACY_REDACTION.md)** — logging safety + redaction rules
+- **[THREAT_MODEL.md](THREAT_MODEL.md)** — what VOLT mitigates and what it cannot
+- **[WORKED_EXAMPLES.md](WORKED_EXAMPLES.md)** — end-to-end sample runs
+- **[ROADMAP.md](ROADMAP.md)** — v0.2+ features and explicit non-goals
+- **[SECURITY.md](SECURITY.md)** — vulnerability reporting policy
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — contribution guidelines
+- **[CHANGELOG.md](CHANGELOG.md)** — version history
 
 ---
 

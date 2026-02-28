@@ -6,6 +6,8 @@
 
 VOLT defines a minimal, interoperable way to produce **tamper-evident execution traces** for agentic workflows and export them as **portable Evidence Bundles** that can be verified independently.
 
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+
 ---
 
 ## 1. Terminology
@@ -55,7 +57,7 @@ An implementation **MUST** produce a canonical byte representation of an event o
    - UTF-8 encoding
    - No insignificant whitespace
 2. Object keys **MUST** be sorted lexicographically (byte-wise) at every nesting level.
-3. Numbers **MUST** be represented without exponent notation where possible and without trailing `.0` when integral.
+3. Numbers **MUST** be represented without exponent notation where possible, and without trailing `.0` when integral.
 4. Strings **MUST** be Unicode NFC normalized.
 
 **Note:** If your language lacks a canonical JSON library, implement a deterministic key sort and normalized serialization.
@@ -73,16 +75,16 @@ An implementation **MUST** produce a canonical byte representation of an event o
 Example:
 - `sha256:2cf24dba5fb0a30e26e83b2ac5...`
 
-VOLT stores hashes as:
+VOLT stores hashes as two fields:
 - `hash_alg`: `"sha256"`
-- `hash`: `"2cf24d..."`
+- `hash`: `"2cf24d..."` (pure hex, no prefix)
 
-(Optionally include a prefixed form in UI, but the stored value is pure hex.)
+Implementations MAY display a prefixed form (e.g., `sha256:2cf24d...`) in UIs, but the stored value MUST be pure hex.
 
 ### 4.3 Signatures (optional in v0.1)
 Signatures/attestations are optional in v0.1 but reserved in schema.
 If used:
-- Signature format **SHOULD** be `ed25519`.
+- Signature algorithm **SHOULD** be Ed25519.
 - Public key identifiers **SHOULD** be stable (DID or key fingerprint).
 - Signatures **MUST** be over a clearly defined message (see §9).
 
@@ -96,7 +98,7 @@ If used:
 - IDs **SHOULD** be UUIDv4 or ULID.
 
 ### 5.2 Time
-- `ts` **MUST** be ISO-8601 with UTC `Z`, e.g. `2026-02-28T19:11:02.123Z`.
+- `ts` **MUST** be ISO 8601 with UTC offset `Z`, e.g., `2026-02-28T19:11:02.123Z`.
 
 ---
 
@@ -109,14 +111,14 @@ All events are JSON objects with these REQUIRED top-level fields:
 | `volt_version` | string | e.g. `"0.1"` |
 | `event_id` | string | unique per run |
 | `run_id` | string | unique per run |
-| `ts` | string | ISO-8601 UTC |
+| `ts` | string | ISO 8601 UTC |
 | `seq` | integer | monotonically increasing starting at 1 |
 | `event_type` | string | dotted path, e.g. `tool.call.executed` |
 | `actor` | object | who caused/observed event |
 | `context` | object | correlation + linkage |
 | `payload` | object | event data (privacy-safe) |
-| `prev_hash` | string | hex; `"0"*64` for genesis |
-| `hash` | string | hex; computed over canonical form excluding `hash` |
+| `prev_hash` | string | hex; 64 zeros for genesis |
+| `hash` | string | hex; SHA-256 of canonical form with `hash` field removed |
 
 ### 6.1 Actor object (REQUIRED)
 `actor` describes who emitted the event.
@@ -187,9 +189,9 @@ Where `EventWithoutHashField` is the event object with the `hash` field removed.
 
 ### 7.2 Genesis event
 
-- The first event in a run has:
-  - `seq = 1`
-  - `prev_hash = "0000...0000"` (64 zeros)
+- The first event in a run **MUST** have:
+  - `seq` = `1`
+  - `prev_hash` = `"0000000000000000000000000000000000000000000000000000000000000000"` (64 hex zeros)
 
 ### 7.3 Chain rule
 
@@ -203,7 +205,7 @@ Verifiers **MUST** fail if the chain rule is violated.
 
 ## 8. Standard event types (v0.1)
 
-Implementations MAY introduce custom event types, but these are RECOMMENDED standard types for interoperability.
+Implementations MAY introduce custom event types, but the following are RECOMMENDED standard types for interoperability.
 
 ### 8.1 Run lifecycle
 - `run.started`
@@ -264,7 +266,7 @@ Events that refer to blobs **MUST** reference them by hash:
   "attachment_refs": [
     {
       "hash_alg": "sha256",
-      "hash": "e3b0c44298fc1c149afbf4c8996fb924...",
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "content_type": "text/plain",
       "label": "stdout"
     }
@@ -293,7 +295,7 @@ A bundle contains a `manifest.json` with REQUIRED fields:
 | `volt_version` | string | `"0.1"` |
 | `bundle_id` | string | UUID/ULID |
 | `run_id` | string | ties to events |
-| `created_ts` | string | ISO-8601 UTC |
+| `created_ts` | string | ISO 8601 UTC |
 | `hash_alg` | string | `"sha256"` |
 | `events_file` | string | usually `events.ndjson` |
 | `event_count` | integer | count of events |
@@ -318,16 +320,16 @@ A verifier **MUST**:
 1. Parse `manifest.json`
 2. Read `events.ndjson` in order
 3. For each event:
-   - validate required fields exist
-   - recompute `hash` from canonical event minus `hash`
-   - confirm computed hash equals stored `hash`
-   - confirm `prev_hash` equals prior event `hash`
+   - Validate required fields exist (per section 6)
+   - Recompute `hash` from canonical event with `hash` field removed
+   - Confirm computed hash equals stored `hash`
+   - Confirm `prev_hash` equals the prior event's `hash`
 4. Confirm event count matches manifest
 5. Confirm manifest `first_event_hash` and `last_event_hash` match
 6. If attachments are referenced:
-   - confirm file exists
-   - recompute SHA-256
-   - confirm matches referenced hash
+   - Confirm the attachment file exists at the expected path
+   - Recompute SHA-256 over raw bytes
+   - Confirm computed hash matches the referenced hash
 7. If signatures exist:
    - verify signatures according to signature record definition (implementation-defined in v0.1; see roadmap)
 
@@ -527,9 +529,9 @@ If a bundle contains signatures, `manifest.json` SHOULD include a `signatures` a
 
 REQUIRED:
 - `sig_version`: `"0.1"`
-- `sig_type`: `"ed25519"` (recommended)
+- `sig_type`: `"ed25519"` (Ed25519 recommended)
 - `key_id`: stable identifier for the signing key (DID or fingerprint)
-- `signed_ts`: ISO-8601 UTC
+- `signed_ts`: ISO 8601 UTC
 - `scope`: `"bundle"` (v0.1 only)
 - `message`: object defining what was signed
 - `signature`: base64 signature bytes
@@ -578,12 +580,12 @@ Example:
 - `volt_version` (string): MUST equal event `volt_version` for this bundle
 - `bundle_id` (string)
 - `run_id` (string)
-- `created_ts` (string ISO-8601 UTC)
+- `created_ts` (string, ISO 8601 UTC)
 - `hash_alg` (string): MUST be `"sha256"` in v0.1
 - `events_file` (string): typically `"events.ndjson"`
 - `event_count` (integer)
-- `first_event_hash` (string hex64)
-- `last_event_hash` (string hex64)
+- `first_event_hash` (string, 64-char hex)
+- `last_event_hash` (string, 64-char hex)
 
 ### 16.2 Recommended fields
 
@@ -635,7 +637,7 @@ A rolling bundle SHOULD include the events up to a cutoff point and may be super
 Rolling bundles SHOULD set:
 
 - `bundle_mode`: `"rolling"`
-- `cutoff_ts`: ISO-8601 UTC
+- `cutoff_ts`: ISO 8601 UTC
 - `last_event_hash` corresponding to last included event
 
 ### 17.2 Final bundles (RECOMMENDED)
@@ -643,7 +645,7 @@ Rolling bundles SHOULD set:
 Final bundles SHOULD set:
 
 - `bundle_mode`: `"final"`
-- include a terminal event: `run.completed | run.failed | run.cancelled`
+- include a terminal event: `run.completed`, `run.failed`, or `run.cancelled`
 
 ### 17.3 Seq gaps
 
@@ -734,9 +736,10 @@ An implementation is VOLT-V conformant if it:
 
 ### 20.1 Naming
 
-`event_type` MUST be a lowercase dotted string with these conventions:
+`event_type` MUST be a lowercase dotted string with at least two segments:
 
 - domain prefix (e.g., `run`, `aee`, `aocl`, `tool`, `hitl`, `file`, `net`, `model`)
+- optional sub-domain (e.g., `call`, `envelope`, `policy`, `decision`)
 - action (e.g., `started`, `requested`, `executed`, `failed`)
 
 Examples:
@@ -772,7 +775,7 @@ Verifiers MUST ignore unknown `event_type` values as long as required fields exi
   - timing
   - NEVER raw headers/cookies by default
 
-Detailed guidance belongs in `PRIVACY_REDACTION.md` (Doc later), but these baseline constraints apply at spec level.
+Detailed guidance is provided in `PRIVACY_REDACTION.md`, but these baseline constraints apply at spec level.
 
 ---
 

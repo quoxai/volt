@@ -36,7 +36,7 @@ VOLT events and attachments MUST NOT contain:
 **Rule of thumb:** If it can grant access, it cannot be recorded.
 
 ### 2.2 Default to metadata + references (MUST)
-- Events SHOULD contain metadata (tool name, operation, timing, status)
+- Events MUST default to metadata (tool name, operation, timing, status)
 - Full outputs should be attachments only when safe and useful
 - When in doubt: record a summary + content hash, not raw content
 

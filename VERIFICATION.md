@@ -152,7 +152,7 @@ Mismatch → **FAIL** (`EVENT_HASH_MISMATCH`)
 
 ### Step 6 — Validate the chain
 For the first event (`seq=1`):
-- `prev_hash` MUST be 64 zeros
+- `prev_hash` MUST be 64 hex zeros (`"0000000000000000000000000000000000000000000000000000000000000000"`)
 
 Else → **FAIL** (`INVALID_GENESIS_PREV_HASH`)
 

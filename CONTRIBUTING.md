@@ -121,4 +121,4 @@ If this repo contains reference tooling (e.g., `volt-verify`):
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the repo's `LICENSE`.
+By contributing, you agree that your contributions will be licensed under the same terms as this project. See the repository for license details.

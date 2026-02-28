@@ -236,7 +236,7 @@ When HITL required:
 On user action:
 
 - Emit `hitl.approved` or `hitl.denied`
-- If denied, end run with `run.cancelled` or `run.failed` (your semantics)
+- If denied, end run with `run.cancelled` or `run.failed` (implementation-defined)
 
 ### 7.4 Tool call lifecycle (mandatory)
 
