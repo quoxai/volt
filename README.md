@@ -54,6 +54,7 @@ VOLT (evidence ledger + bundle + verification)
 - **[AEE](https://github.com/quoxai/aee)**: message format + correlation IDs for agent-to-agent and human-to-agent envelopes.
 - **[AOCL](https://github.com/quoxai/aocl)**: orchestration control layers (policy decisions, permissions, HITL gates, escalation rules).
 - **VOLT**: evidence recording + integrity guarantees + exportable bundles + verification.
+- **[WARD](https://github.com/quoxai/ward)**: content-free hash-chain witnessing — produces tamper-evident receipts of VOLT events and bundles without storing their content. Signed WARD tips can be published to external sinks (Gitea tags, S3 Object Lock) for independent anchoring.
 
 ### VOLT explicitly does NOT
 - Replace AEE messaging
@@ -129,7 +130,7 @@ Anyone can run verification on the bundle:
 
 - **Privacy by default**: do not log secrets; log metadata + references.
 - **Minimal but extensible**: small schema, versioned, forward-compatible.
-- **Separation of concerns**: AEE = envelope, AOCL = control, VOLT = evidence.
+- **Separation of concerns**: AEE = envelope, AOCL = control, VOLT = evidence, WARD = witnessing.
 - **Portable evidence**: bundles are self-contained and exportable.
 - **Verifier-first**: if it can't be verified independently, it doesn't count as evidence.
 
