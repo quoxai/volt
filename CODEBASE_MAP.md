@@ -1,26 +1,26 @@
-<!-- Last verified: 2026-03-06 by /codebase-mirror -->
+<!-- Last verified: 2026-03-10 by /codebase-mirror -->
 
 # VOLT (Verifiable Operations Ledger & Trace) — Codebase Map
 
 ## Metrics
 | Metric | Count |
 |--------|-------|
-| Spec Files | 10 markdown |
-| JSON Schemas | 4 |
-| IETF Status | Submitted (draft-cowles-volt-00) |
-| Event Types | 7 |
+| Files | 18 |
+| Schema Files | 4 |
+| IETF Draft | Yes (draft-cowles-volt-00) |
 
-## Key Specs
-- **Model:** Tamper-evident trace events, cryptographically chained, append-only
-- **Bundle format:** manifest.json + events.ndjson + optional attachments/
-- **Event types:** message, policy_decision, tool_call, human_approval, file_operation, network_request, model_response
-- **Verification:** Independent hash chain validation, INTACT/BROKEN/PARTIAL status
-- **Lifecycle:** record → finalize → export → verify
+## Key Files
+| File | Purpose |
+|------|---------|
+| SPEC.md | Normative spec |
+| EVIDENCE_BUNDLES.md | Bundle layout, retention |
+| VERIFICATION.md | Verifier algorithm |
+| INTEGRATION.md | AEE/AOCL integration |
+| PRIVACY_REDACTION.md | Redaction rules |
+| THREAT_MODEL.md | Threat model |
 
 ## Schemas
-| Schema | Purpose |
-|--------|---------|
-| event.schema.json | Event structure |
-| manifest.schema.json | Bundle manifest |
-| signature.schema.json | Cryptographic signatures |
-| verification-report.schema.json | Verification results |
+event.schema.json, manifest.schema.json, signature.schema.json, verification-report.schema.json
+
+## Status
+Protocol v0.1 (draft) — IETF submitted 2026-02-28 (#160324) — MIT
