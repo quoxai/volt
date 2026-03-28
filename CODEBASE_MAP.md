@@ -1,30 +1,33 @@
-<!-- Last verified: 2026-03-21 by /codebase-mirror -->
+<!-- Last verified: 2026-03-27 by /codebase-mirror -->
 
 # VOLT (Verifiable Operations Ledger & Trace) — Codebase Map
 
-## Metrics
+## Spec Status
+| Field | Value |
+|-------|-------|
+| Version | 0.1 |
+| IETF Draft | draft-cowles-volt-00 |
+| License | MIT |
 
-| Metric | Count |
-|--------|-------|
-| Spec file | 1 (SPEC.md) |
-| Schemas | 4 (event, manifest, signature, verification-report) |
-| Supporting docs | 9 |
+## Architecture
+Cryptographically chained event log + portable evidence bundles. Records message in/out, policy allow/deny, tool calls, human approvals, file access, network requests, model responses.
 
-## Summary
-
-VOLT provides verifiable audit trails for AI agent operations. Captures events, creates signed manifests, and enables independent verification.
+## Schemas (4)
+| Schema | Purpose |
+|--------|---------|
+| `schemas/event.schema.json` | Individual event schema |
+| `schemas/manifest.schema.json` | Bundle manifest (SHA-256 chaining) |
+| `schemas/signature.schema.json` | Signature records |
+| `schemas/verification-report.schema.json` | Verification output |
 
 ## Key Files
-
-- SPEC.md — Full specification
-- schemas/event.schema.json
-- schemas/manifest.schema.json
-- schemas/signature.schema.json
-- schemas/verification-report.schema.json
-- EVIDENCE_BUNDLES.md — Evidence bundle format
-- VERIFICATION.md — Verification procedures
-- WORKED_EXAMPLES.md — Worked examples
-- THREAT_MODEL.md — Threat analysis
-- PRIVACY_REDACTION.md — Privacy/redaction handling
-- INTEGRATION.md — Integration guide
-- SECURITY.md — Security considerations
+| File | Purpose |
+|------|---------|
+| `README.md` | Concept overview |
+| `SPEC.md` | Normative protocol spec |
+| `EVIDENCE_BUNDLES.md` | Bundle layout, attachments, retention |
+| `VERIFICATION.md` | Verifier algorithm + report format |
+| `INTEGRATION.md` | AEE + AOCL hooks |
+| `PRIVACY_REDACTION.md` | Logging safety rules |
+| `THREAT_MODEL.md` | Threat analysis |
+| `WORKED_EXAMPLES.md` | Sample runs |
