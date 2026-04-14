@@ -1,4 +1,4 @@
-<!-- Last verified: 2026-04-13 by codebase-mirror scan -->
+<!-- Last verified: 2026-04-14T18:45:00Z by codebase-mirror scan -->
 
 # VOLT (Verifiable Operations Ledger & Trace) — Codebase Map
 
@@ -26,34 +26,35 @@ VOLT records what happened at each boundary, chains events cryptographically, an
 | Metric | Count |
 |--------|-------|
 | Schema Files | 4 |
-| Documentation Files | 11 |
+| Documentation Files | 12 |
 | Example Directories | 2 |
+| Total Lines (docs + schemas) | 4,285 |
 
 ## Directory Structure
 
 ```
 volt/
 ├── schemas/                    # JSON Schema definitions (v0.1)
-│   ├── event.schema.json       # Single VOLT trace event (11 required fields)
-│   ├── manifest.schema.json    # Evidence Bundle manifest (9 required fields)
-│   ├── signature.schema.json   # Signature/attestation record (Ed25519)
-│   └── verification-report.schema.json  # Verifier output (PASS/FAIL/ERROR)
+│   ├── event.schema.json                 # Single VOLT trace event (11 required fields, 135 lines)
+│   ├── manifest.schema.json              # Evidence Bundle manifest (9 required fields, 159 lines)
+│   ├── signature.schema.json             # Signature/attestation record (7 required fields, 88 lines)
+│   └── verification-report.schema.json   # Verifier output (PASS/FAIL/ERROR, 107 lines)
 ├── examples/
 │   ├── simple-run/             # Placeholder for basic tool call example
 │   └── hitl-run/               # Placeholder for HITL-gated write example
-├── SPEC.md                     # Normative protocol specification (23 sections)
-├── EVIDENCE_BUNDLES.md         # Bundle format, layout, retention
-├── VERIFICATION.md             # Verifier algorithm (10-step) and report format
-├── INTEGRATION.md              # AEE/AOCL/tool hook points
-├── PRIVACY_REDACTION.md        # Logging safety, redaction rules
-├── THREAT_MODEL.md             # Security objectives and mitigations
-├── WORKED_EXAMPLES.md          # End-to-end trace examples
-├── ROADMAP.md                  # v0.2+ features (checkpointing, replay, attestations, TraceQL)
-├── SECURITY.md                 # Vulnerability reporting policy
-├── CONTRIBUTING.md             # Contribution guidelines
-├── CHANGELOG.md                # Version history
-├── README.md                   # Overview and entry point
-└── LICENSE                     # License file
+├── SPEC.md                     # Normative protocol specification (822 lines, 23 sections)
+├── INTEGRATION.md              # AEE/AOCL/tool hook points (391 lines)
+├── VERIFICATION.md             # Verifier algorithm (10-step) and report format (345 lines)
+├── EVIDENCE_BUNDLES.md         # Bundle format, layout, retention (337 lines)
+├── PRIVACY_REDACTION.md        # Logging safety, redaction rules (332 lines)
+├── WORKED_EXAMPLES.md          # End-to-end trace examples (281 lines)
+├── THREAT_MODEL.md             # Security objectives and mitigations (247 lines)
+├── ROADMAP.md                  # v0.2+ features (checkpointing, replay, attestations, TraceQL) (223 lines)
+├── README.md                   # Overview and entry point (170 lines)
+├── CONTRIBUTING.md             # Contribution guidelines (124 lines)
+├── SECURITY.md                 # Vulnerability reporting policy (68 lines)
+├── CHANGELOG.md                # Version history (48 lines)
+└── LICENSE                     # Apache 2.0 (190 lines)
 ```
 
 ## Schema Files
@@ -87,6 +88,24 @@ volt/
     <first2>/<hash>
   signatures/             # Optional: signature records
   redactions/             # Optional: redaction log
+```
+
+## Event Schema (Key Fields)
+
+```json
+{
+  "volt_version": "0.1",
+  "event_id": "unique-per-run",
+  "run_id": "unique-run-id",
+  "ts": "2026-04-14T12:00:00.000Z",
+  "seq": 1,
+  "event_type": "run.started",
+  "actor": { "actor_type": "agent|human|system|tool|runner", "actor_id": "..." },
+  "context": { "correlation_id": "...", "aee_envelope_id": "...", "aocl_policy_id": "..." },
+  "payload": { /* event-specific, privacy-safe */ },
+  "prev_hash": "0000...0000",  // 64 zeros for genesis
+  "hash": "sha256-hex"
+}
 ```
 
 ## Verification Algorithm (10 Steps)
@@ -157,6 +176,19 @@ VoltVerifier:
 - SHOULD scan for secrets before writing events/attachments
 - SHOULD NOT log raw shell commands, HTTP headers, or file contents
 
+## Threat Model Summary
+
+| Threat | Mitigated By |
+|--------|--------------|
+| Post-hoc event tampering | Event hash validation (`EVENT_HASH_MISMATCH`) |
+| Event deletion | Chain breaks (`CHAIN_BROKEN`), seq gap detection |
+| Event insertion | Chain integrity validation |
+| Attachment substitution | Content-addressed hash validation |
+| Repudiation (partial v0.1) | Actor identity, optional signatures |
+| Silent redaction | Explicit redaction flags (governance concern) |
+
+**Not fully mitigated (v0.1):** Compromised host/runner, key theft, incomplete coverage, privacy leakage. These require operational controls, AOCL enforcement, and roadmap features (attestations).
+
 ## Roadmap (Post v0.1)
 
 | Version | Features |
@@ -179,10 +211,10 @@ VoltVerifier:
 
 | Check | Status | Details |
 |-------|--------|---------|
-| schema-files | ✓ pass | 4 JSON schemas (event, manifest, signature, verification-report) |
-| spec-complete | ✓ pass | Full v0.1 spec documented in SPEC.md (23 sections) |
-| examples-exist | ✓ pass | simple-run, hitl-run directories (placeholders) |
-| privacy-guidance | ✓ pass | PRIVACY_REDACTION.md defines safe defaults |
-| threat-model | ✓ pass | THREAT_MODEL.md covers mitigations |
-| verification-spec | ✓ pass | VERIFICATION.md defines 10-step algorithm |
-| integration-guide | ✓ pass | INTEGRATION.md maps AEE/AOCL hook points |
+| schema-files | pass | 4 JSON schemas (event, manifest, signature, verification-report) |
+| spec-complete | pass | Full v0.1 spec documented in SPEC.md (23 sections) |
+| examples-exist | pass | simple-run, hitl-run directories (placeholders) |
+| privacy-guidance | pass | PRIVACY_REDACTION.md defines safe defaults |
+| threat-model | pass | THREAT_MODEL.md covers mitigations |
+| verification-spec | pass | VERIFICATION.md defines 10-step algorithm |
+| integration-guide | pass | INTEGRATION.md maps AEE/AOCL hook points |
