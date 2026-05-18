@@ -1,7 +1,6 @@
 # VOLT Codebase Map
 
-<!-- Last verified: 2026-05-14 by codebase scan -->
-> Auto-generated structural overview — Last scan: 2026-05-14 UTC
+> Auto-generated structural overview — Last scan: 2026-05-18T17:45Z
 
 **VOLT — Verifiable Operations Ledger & Trace.** A cryptographically chained event log + portable run bundle + verifier for agentic workflows. The "flight recorder" for agentic workflows with cryptographic integrity.
 
@@ -25,7 +24,7 @@ WARD (hash-chain witnessing, external anchoring)
 
 ## Version
 
-- **Protocol:** v0.1.1 (draft)
+- **Protocol:** v0.1.1 (draft, 2026-02-28)
 - **Scope:** Record → Bundle → Verify
 - **License:** Apache 2.0
 - **Type:** Protocol specification (no runtime code)
@@ -36,12 +35,12 @@ WARD (hash-chain witnessing, external anchoring)
 volt/
 ├── README.md                  # Protocol overview, design principles
 ├── SPEC.md                    # Normative spec (23 sections)
-├── EVIDENCE_BUNDLES.md        # Bundle layout, attachments, retention (13 sections)
+├── EVIDENCE_BUNDLES.md        # Bundle layout, attachments, retention
 ├── VERIFICATION.md            # Verifier algorithm (10 steps), report format
-├── INTEGRATION.md             # AEE/AOCL/tool integration guide (11 sections)
-├── WORKED_EXAMPLES.md         # End-to-end sample runs (4 examples)
+├── INTEGRATION.md             # AEE/AOCL/tool integration guide
+├── WORKED_EXAMPLES.md         # End-to-end sample runs
 ├── THREAT_MODEL.md            # Security threat model (10 threats)
-├── PRIVACY_REDACTION.md       # Privacy handling, redaction rules (12 sections)
+├── PRIVACY_REDACTION.md       # Privacy handling, redaction rules
 ├── SECURITY.md                # Vulnerability reporting policy
 ├── ROADMAP.md                 # v0.2–v1.0 roadmap (6 versions planned)
 ├── CONTRIBUTING.md            # Contribution guidelines
