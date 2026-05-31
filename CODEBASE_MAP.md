@@ -1,6 +1,6 @@
 # VOLT Codebase Map
 
-> Auto-generated structural overview — Last scan: 2026-05-18T17:45Z
+> Auto-generated structural overview — Last scan: 2026-05-31T17:30Z
 
 **VOLT — Verifiable Operations Ledger & Trace.** A cryptographically chained event log + portable run bundle + verifier for agentic workflows. The "flight recorder" for agentic workflows with cryptographic integrity.
 
@@ -10,43 +10,50 @@
 
 ```
 User Request
-    ↓
-AEE (messages/envelopes) ↔ Agents
-    ↓
+    │
+    v
+AEE (messages/envelopes) <──> Agents
+    │
+    v
 AOCL (policies, approvals, control)
-    ↓
+    │
+    v
 Tools / Runtimes / Files / Network
-    ↓
+    │
+    v
 VOLT (evidence ledger + bundle + verification)
-    ↓
+    │
+    v
 WARD (hash-chain witnessing, external anchoring)
 ```
 
 ## Version
 
-- **Protocol:** v0.1.1 (draft, 2026-02-28)
+- **Protocol:** v0.1.1 (draft)
 - **Scope:** Record → Bundle → Verify
 - **License:** Apache 2.0
-- **Type:** Protocol specification (no runtime code)
+- **Remote:** github.com/quoxai/volt
+- **Type:** Protocol specification (JSON schemas only, no runtime code)
 
 ## Repository Structure
 
 ```
 volt/
 ├── README.md                  # Protocol overview, design principles
-├── SPEC.md                    # Normative spec (23 sections)
+├── SPEC.md                    # Normative spec (23 sections, 822 lines)
 ├── EVIDENCE_BUNDLES.md        # Bundle layout, attachments, retention
 ├── VERIFICATION.md            # Verifier algorithm (10 steps), report format
 ├── INTEGRATION.md             # AEE/AOCL/tool integration guide
-├── WORKED_EXAMPLES.md         # End-to-end sample runs
+├── WORKED_EXAMPLES.md         # End-to-end sample runs (4 examples)
 ├── THREAT_MODEL.md            # Security threat model (10 threats)
 ├── PRIVACY_REDACTION.md       # Privacy handling, redaction rules
 ├── SECURITY.md                # Vulnerability reporting policy
 ├── ROADMAP.md                 # v0.2–v1.0 roadmap (6 versions planned)
 ├── CONTRIBUTING.md            # Contribution guidelines
-├── CHANGELOG.md               # Version history (v0.1.0 → v0.1.1)
+├── CHANGELOG.md               # Version history (v0.1.0, v0.1.1)
 ├── LICENSE                    # Apache 2.0
-├── schemas/                   # JSON Schema definitions (v0.1)
+├── CODEBASE_MAP.md            # This file
+├── schemas/                   # JSON Schema definitions (Draft 2020-12)
 │   ├── event.schema.json          # Trace event schema
 │   ├── manifest.schema.json       # Bundle manifest schema
 │   ├── signature.schema.json      # Signature record schema
@@ -55,6 +62,23 @@ volt/
     ├── simple-run/.gitkeep
     └── hitl-run/.gitkeep
 ```
+
+## Document Map
+
+| File | Purpose | Key Sections |
+|------|---------|--------------|
+| `README.md` | Protocol overview | Why VOLT, where it fits, core features |
+| `SPEC.md` | Normative specification | 23 sections: event schema, hashing, chaining, manifest, signatures |
+| `EVIDENCE_BUNDLES.md` | Bundle format | Layout, attachments, rolling vs final, retention |
+| `VERIFICATION.md` | Verifier algorithm | 10-step verification, strict/permissive modes, report format |
+| `INTEGRATION.md` | Integration guide | AEE/AOCL hooks, tool middleware, evidence points |
+| `WORKED_EXAMPLES.md` | Sample traces | 4 scenarios with events.ndjson + manifest |
+| `THREAT_MODEL.md` | Security analysis | 10 threats, mitigations, residual risks |
+| `PRIVACY_REDACTION.md` | Privacy rules | Secret scanning, redaction strategies |
+| `ROADMAP.md` | Version plan | v0.2–v1.0 features |
+| `SECURITY.md` | Vulnerability policy | Report privately to security@quox.ai |
+| `CONTRIBUTING.md` | Contribution guide | PR process, versioning rules |
+| `CHANGELOG.md` | Version history | v0.1.0 initial, v0.1.1 clarifications |
 
 ## JSON Schemas
 
@@ -73,7 +97,7 @@ volt/
   "event_id": "<unique>",
   "run_id": "<unique>",
   "ts": "<ISO 8601 UTC>",
-  "seq": "<monotonic int ≥ 1>",
+  "seq": "<monotonic int >= 1>",
   "event_type": "<dotted path>",
   "actor": { "actor_type": "agent|human|system|tool|runner", "actor_id": "..." },
   "context": { "correlation_id": "...", ... },
@@ -85,13 +109,13 @@ volt/
 
 ## Actor Types
 
-| Type | Description |
-|------|-------------|
-| `agent` | Autonomous agent (e.g., `quox.agent.routeros`) |
-| `human` | Human user (e.g., `user:adam`) |
-| `system` | System component (e.g., `quox.core`, `quox.aocl`) |
-| `tool` | Tool execution context |
-| `runner` | Machine/host executing actions (e.g., `runner:vm-prod-01`) |
+| Type | Description | Example |
+|------|-------------|---------|
+| `agent` | Autonomous agent | `quox.agent.routeros`, `quox.agent.ops` |
+| `human` | Human user | `user:adam` |
+| `system` | System component | `quox.core`, `quox.aocl`, `quox.hitl` |
+| `tool` | Tool execution context | — |
+| `runner` | Machine/host executing actions | `runner:vm-prod-01`, `runner:stage-web-01` |
 
 ## Context Object Fields
 
@@ -119,7 +143,7 @@ volt/
 | Files/network | `file.read`, `file.write`, `net.request` |
 | Model activity | `model.requested`, `model.responded` |
 
-Custom types: Use vendor namespace prefix (e.g., `quox.marketplace.offer.created`)
+Custom types: Use vendor namespace prefix (e.g., `quox.marketplace.offer.created`, `vendorx.routeros.script.deployed`)
 
 ## Evidence Bundle Layout
 
@@ -135,7 +159,7 @@ Custom types: Use vendor namespace prefix (e.g., `quox.marketplace.offer.created
 
 | Mode | Description |
 |------|-------------|
-| `final` | Complete run with terminal event |
+| `final` | Complete run with terminal event (`run.completed`/`failed`/`cancelled`) |
 | `rolling` | Periodic snapshot with `cutoff_ts` |
 
 ## Conformance Levels
@@ -169,14 +193,14 @@ Custom types: Use vendor namespace prefix (e.g., `quox.marketplace.offer.created
 | EVENTS_FILE_MISSING | events.ndjson not found |
 | INVALID_EVENT_JSON | Line not valid JSON |
 | EVENT_SCHEMA_INVALID | Missing required event fields |
-| VERSION_MISMATCH | Event ≠ manifest version |
-| RUN_ID_MISMATCH | Event ≠ manifest run_id |
+| VERSION_MISMATCH | Event version != manifest version |
+| RUN_ID_MISMATCH | Event run_id != manifest run_id |
 | SEQ_NOT_MONOTONIC | seq not increasing |
 | SEQ_DUPLICATE | Duplicate seq |
 | SEQ_GAP | Missing seq |
-| EVENT_HASH_MISMATCH | Computed ≠ stored hash |
-| INVALID_GENESIS_PREV_HASH | First prev_hash ≠ 64 zeros |
-| CHAIN_BROKEN | prev_hash ≠ previous event hash |
+| EVENT_HASH_MISMATCH | Computed hash != stored hash |
+| INVALID_GENESIS_PREV_HASH | First prev_hash != 64 zeros |
+| CHAIN_BROKEN | prev_hash != previous event hash |
 | MANIFEST_MISMATCH | Count/hash mismatch |
 | ATTACHMENT_MISSING | Referenced attachment not found |
 | ATTACHMENT_HASH_MISMATCH | Attachment content mismatch |
@@ -195,12 +219,12 @@ CLI exit codes: 0=PASS, 1=FAIL, 2=ERROR
 | Signatures | Ed25519 (optional v0.1) |
 | Canonical JSON | Sorted keys, no whitespace, NFC normalized |
 
-## Privacy Rules
+## Privacy Rules (SPEC section 21)
 
 - Events MUST NOT include secrets (API keys, tokens, passwords, private keys)
 - Store metadata/references, not raw content
-- v0.1 payloads are metadata-only
-- Use `inputs_redacted: true` for sensitive payloads
+- v0.1 payloads are metadata-only (clarified in v0.1.1)
+- Use `inputs_redacted: true` / `outputs_redacted: true` for sensitive payloads
 - Network events: method, status, timing — never raw headers/cookies
 - Tool commands: log category/class, not raw command strings with secrets
 
@@ -216,12 +240,12 @@ CLI exit codes: 0=PASS, 1=FAIL, 2=ERROR
 | HITL lifecycle | `hitl.requested`, `hitl.approved`/`denied`/`timed_out` |
 | Tool execution | `tool.call.requested`, `tool.call.executed`/`failed` |
 
-### Bridge Activation Model
+### Bridge Activation Model (v0.1.1)
 
 - VOLT recording SHOULD be opt-in via host application settings
 - Use observer/hook pattern that does not couple transport (AEE) to audit (VOLT)
 - Bridge failures MUST NOT disrupt the transport pipeline (fire-and-forget)
-- Implementations SHOULD expose counters: `events_recorded`, `events_failed`, `runs_started`, `runs_completed`
+- Implementations SHOULD expose counters: `events_recorded`, `events_failed`, `runs_started`, `runs_completed`, `envelopes_processed`, `enabled`
 
 ### Minimal Interfaces (pseudocode)
 
@@ -282,16 +306,25 @@ VOLT is NOT:
 | AOCL | Orchestration control (policy, HITL) | github.com/quoxai/aocl |
 | WARD | Hash-chain witnessing, external anchoring | github.com/quoxai/ward |
 
+## Worked Examples (WORKED_EXAMPLES.md)
+
+| Example | Scenario | Key Events |
+|---------|----------|------------|
+| 1 | Read-only tool call (no HITL) | 8 events, PASS verification |
+| 2 | Production write with HITL | 10 events, approval-before-execution proof |
+| 3 | Multi-agent workflow + tool failure | Incident reconstruction |
+| 4 | Tampering detection | EVENT_HASH_MISMATCH demonstration |
+
 ## Quick Reference
 
 | Goal | File(s) |
 |------|---------|
 | Understand VOLT | README.md |
-| Build a recorder | SPEC.md §6-7, schemas/event.schema.json |
-| Build a bundler | SPEC.md §10,16, EVIDENCE_BUNDLES.md |
+| Build a recorder | SPEC.md sections 6-7, schemas/event.schema.json |
+| Build a bundler | SPEC.md sections 10,16, EVIDENCE_BUNDLES.md |
 | Build a verifier | VERIFICATION.md, schemas/verification-report.schema.json |
 | Integrate AEE/AOCL | INTEGRATION.md |
-| Add signatures | SPEC.md §15, schemas/signature.schema.json |
+| Add signatures | SPEC.md section 15, schemas/signature.schema.json |
 | Handle privacy | PRIVACY_REDACTION.md |
 | Understand threats | THREAT_MODEL.md |
 | See examples | WORKED_EXAMPLES.md |
