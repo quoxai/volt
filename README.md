@@ -162,6 +162,17 @@ See: [SPEC.md](SPEC.md), [EVIDENCE_BUNDLES.md](EVIDENCE_BUNDLES.md), [VERIFICATI
 
 ---
 
+## Reference SDK
+
+A conformant reference implementation of VOLT v0.1 exists:
+
+- **`@quox/volt`** (TypeScript / Node, zero runtime dependencies), at **github.com/quoxai/volt-sdk**.
+- The full Record, Bundle, Verify loop: canonical JSON (SPEC section 3.2, strictly enforced), event hashing and chaining (section 7), manifest build (section 16), Ed25519 signing with manifest-bound signatures (section 15), the VERIFICATION.md verifier, and a `volt-verify` CLI. Conformance is anchored to frozen external hash vectors, not just the SDK's own fixtures.
+
+The SDK repo is private today and **opening at launch**, together with the npm publish. Until then the reference above is a name, not a live link.
+
+---
+
 ## Naming
 
 **VOLT** stands for **Verifiable Operations Ledger & Trace**.
