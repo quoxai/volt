@@ -1,4 +1,4 @@
-<!-- Last verified: 2026-07-27T03:30:00Z by /codebase-mirror -->
+<!-- Last verified: 2026-07-27T15:27:00Z by /codebase-mirror -->
 
 # VOLT — Codebase Map
 
@@ -17,7 +17,7 @@
 | Schema files | 4 |
 | Spec docs (Markdown) | 12 |
 | Example bundles | 0 (2 stub dirs: `simple-run`, `hitl-run`) |
-| Total lines | ~4,082 |
+| Total lines | ~4,076 |
 | License | Apache 2.0 |
 
 ## Directory Structure
@@ -37,7 +37,7 @@ volt/
 ├── CONTRIBUTING.md              # Contribution guidelines (124 lines)
 ├── CHANGELOG.md                 # Version history (0.1.0, 0.1.1) (48 lines)
 ├── CODEBASE_MAP.md              # This file
-├── LICENSE                      # Apache 2.0
+├── LICENSE                      # Apache 2.0 (190 lines)
 ├── schemas/
 │   ├── event.schema.json        # Trace event schema (135 lines)
 │   ├── manifest.schema.json     # Bundle manifest schema (159 lines)
