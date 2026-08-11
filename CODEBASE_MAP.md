@@ -1,12 +1,12 @@
-<!-- Last verified: 2026-07-27T15:27:00Z by /codebase-mirror -->
+<!-- Last verified: 2026-08-11 by /codebase-mirror -->
 
 # VOLT — Codebase Map
 
-**VOLT — Verifiable Operations Ledger & Trace.** A cryptographically chained event log + portable run bundle + verifier for agentic workflows. The "flight recorder" with cryptographic integrity. Part of the Quox protocol family (AEE, AOCL, VOLT, WARD). Specification only, no runtime code.
+**VOLT — Verifiable Operations Ledger & Trace.** A cryptographically chained event log + portable run bundle + verifier for agentic workflows. The "flight recorder" with cryptographic integrity. Part of the Quox protocol family (AEE, AOCL, VOLT, WARD). Specification only, no runtime code: there are no entry points, registries, API routes, build configs, or tests in this repo, only normative docs and JSON Schemas.
 
 **IETF Internet-Draft:** [`draft-cowles-volt-00`](https://datatracker.ietf.org/doc/draft-cowles-volt/)
 
-**Reference SDK:** `@quox/volt` (TypeScript, zero runtime deps) at [github.com/quoxai/volt-sdk](https://github.com/quoxai/volt-sdk) — opening at launch.
+**Reference SDK:** `@quox/volt` (TypeScript / Node, zero runtime dependencies) at github.com/quoxai/volt-sdk. Implements the full Record, Bundle, Verify loop plus a `volt-verify` CLI, with conformance anchored to frozen external hash vectors. The SDK repo is private today, opening at launch with the npm publish.
 
 ## Metrics
 
@@ -14,17 +14,17 @@
 |--------|-------|
 | Protocol Version | `0.1` |
 | Doc-set Version | `0.1.1` (2026-02-28) |
-| Schema files | 4 |
+| Schema files | 4 (JSON Schema Draft 2020-12) |
 | Spec docs (Markdown) | 12 |
 | Example bundles | 0 (2 stub dirs: `simple-run`, `hitl-run`) |
-| Total lines | ~4,076 |
+| Total lines | ~4,076 (excluding this map) |
 | License | Apache 2.0 |
 
 ## Directory Structure
 
 ```
 volt/
-├── README.md                    # Overview, positioning, design principles (180 lines)
+├── README.md                    # Overview, positioning, design principles, SDK pointer (180 lines)
 ├── SPEC.md                      # Normative protocol spec — 23 sections (821 lines)
 ├── EVIDENCE_BUNDLES.md          # Bundle layout, attachments, retention (337 lines)
 ├── VERIFICATION.md              # Verifier algorithm (10 steps) + report format (345 lines)
@@ -56,7 +56,7 @@ volt/
 | `schemas/event.schema.json` | Event schema (11 required fields) |
 | `schemas/manifest.schema.json` | Bundle manifest (9 required fields) |
 | `schemas/signature.schema.json` | Signature record (7 required fields) |
-| `schemas/verification-report.schema.json` | Verifier output with 20 standard failure codes |
+| `schemas/verification-report.schema.json` | Verifier output (`result` required) with 20 standard failure codes |
 
 ## Core Concepts
 
