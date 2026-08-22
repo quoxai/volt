@@ -1,8 +1,8 @@
-<!-- Last verified: 2026-08-21 by /codebase-mirror -->
+<!-- Last verified: 2026-08-22 by /codebase-mirror -->
 
-# VOLT — Codebase Map
+# VOLT: Codebase Map
 
-**VOLT — Verifiable Operations Ledger & Trace.** A cryptographically chained event log + portable run bundle + verifier for agentic workflows. The "flight recorder" with cryptographic integrity. Part of the Quox protocol family (AEE, AOCL, VOLT, WARD). Specification only, no runtime code: there are no entry points, registries, API routes, build configs, or tests in this repo, only normative docs and JSON Schemas.
+**VOLT (Verifiable Operations Ledger & Trace).** A cryptographically chained event log + portable run bundle + verifier for agentic workflows. The "flight recorder" with cryptographic integrity. Part of the Quox protocol family (AEE, AOCL, VOLT, WARD). Specification only, no runtime code: there are no entry points, registries, API routes, build configs, or tests in this repo, only normative docs and JSON Schemas.
 
 **IETF Internet-Draft:** [`draft-cowles-volt-00`](https://datatracker.ietf.org/doc/draft-cowles-volt/)
 
@@ -14,7 +14,7 @@
 |--------|-------|
 | Protocol Version | `0.1` |
 | Doc-set Version | `0.1.1` (2026-02-28) |
-| Schema files | 4 (JSON Schema Draft 2020-12) |
+| Schema files | 4 (JSON Schema Draft 2020-12, all parse clean) |
 | Spec docs (Markdown) | 12 |
 | Example bundles | 0 (2 stub dirs: `simple-run`, `hitl-run`) |
 | Total lines | ~4,076 (excluding this map) |
@@ -25,14 +25,14 @@
 ```
 volt/
 ├── README.md                    # Overview, positioning, design principles, SDK pointer (180 lines)
-├── SPEC.md                      # Normative protocol spec — 23 sections (821 lines)
+├── SPEC.md                      # Normative protocol spec, 23 sections (821 lines)
 ├── EVIDENCE_BUNDLES.md          # Bundle layout, attachments, retention (337 lines)
 ├── VERIFICATION.md              # Verifier algorithm (10 steps) + report format (345 lines)
 ├── INTEGRATION.md               # AEE/AOCL/tool hook points, middleware patterns (391 lines)
 ├── PRIVACY_REDACTION.md         # Logging safety, redaction strategies (332 lines)
 ├── THREAT_MODEL.md              # Security objectives, mitigations, residual risks (247 lines)
 ├── WORKED_EXAMPLES.md           # End-to-end sample runs with event sequences (281 lines)
-├── ROADMAP.md                   # v0.2 → v1.0 evolution plan (223 lines)
+├── ROADMAP.md                   # v0.2 to v1.0 evolution plan (223 lines)
 ├── SECURITY.md                  # Vulnerability reporting policy (68 lines)
 ├── CONTRIBUTING.md              # Contribution guidelines (124 lines)
 ├── CHANGELOG.md                 # Version history (0.1.0, 0.1.1) (48 lines)
@@ -54,8 +54,8 @@ volt/
 |------|---------|
 | `SPEC.md` | Normative spec: canonicalization, crypto, event schema, chaining, manifest, signatures, conformance levels |
 | `schemas/event.schema.json` | Event schema (11 required fields) |
-| `schemas/manifest.schema.json` | Bundle manifest (9 required fields) |
-| `schemas/signature.schema.json` | Signature record (7 required fields) |
+| `schemas/manifest.schema.json` | Bundle manifest (9 required fields, 10 optional) |
+| `schemas/signature.schema.json` | Signature record (7 required fields, versioned by `sig_version`) |
 | `schemas/verification-report.schema.json` | Verifier output (`result` required) with 20 standard failure codes |
 
 ## Core Concepts
@@ -66,7 +66,7 @@ volt/
 - `ts`: ISO 8601 UTC timestamp with `Z` suffix
 - `seq`: Monotonically increasing from 1
 - `event_type`: Dotted path (e.g., `tool.call.executed`)
-- `actor`: `{actor_type, actor_id}` — types: `agent`, `human`, `system`, `tool`, `runner`
+- `actor`: `{actor_type, actor_id}`, types: `agent`, `human`, `system`, `tool`, `runner`
 - `context`: `{correlation_id}` + optional AEE/AOCL linkage
 - `payload`: Event-specific data (privacy-safe, metadata-only in v0.1)
 - `prev_hash`: SHA-256 of previous event (64 zeros for genesis)
@@ -84,15 +84,15 @@ volt/
 ```
 
 ### Verification Algorithm (10 Steps)
-1. Load `manifest.json` — validate required fields
-2. Load `events.ndjson` — one JSON object per line
-3. Validate ordering — `seq` monotonically increasing from 1
+1. Load `manifest.json`, validate required fields
+2. Load `events.ndjson`, one JSON object per line
+3. Validate ordering: `seq` monotonically increasing from 1
 4. Validate required event fields per schema
-5. Validate version consistency — all events match manifest `volt_version`
+5. Validate version consistency: all events match manifest `volt_version`
 6. Recompute SHA-256 event hashes via Canonical JSON
-7. Validate chain — `prev_hash` equals previous event's `hash` (genesis = 64 zeros)
+7. Validate chain: `prev_hash` equals previous event's `hash` (genesis = 64 zeros)
 8. Validate `run_id` consistency across all events
-9. Validate manifest endpoints — `first_event_hash`, `last_event_hash`, `event_count`
+9. Validate manifest endpoints: `first_event_hash`, `last_event_hash`, `event_count`
 10. Validate attachments (if referenced) and signatures (if present)
 
 **Exit codes:** 0=PASS, 1=FAIL, 2=ERROR
@@ -117,7 +117,7 @@ Custom types use vendor namespace prefix (e.g., `quox.marketplace.offer.created`
 |-----------|-----------|--------|
 | Event/attachment hashing | SHA-256 | Lowercase 64-char hex |
 | Signatures (optional) | Ed25519 | Base64-encoded |
-| Canonical JSON | Sorted keys (byte-wise), no whitespace, NFC strings, no exponent notation | — |
+| Canonical JSON | Sorted keys (byte-wise), no whitespace, NFC strings, no exponent notation | n/a |
 
 ## Conformance Levels
 
@@ -147,13 +147,13 @@ Custom types use vendor namespace prefix (e.g., `quox.marketplace.offer.created`
 2. **AEE boundaries**: `aee.envelope.received`, `aee.envelope.sent`
 3. **AOCL decisions**: `aocl.policy.evaluated`, `aocl.decision.approved`/`denied`
 4. **HITL gating**: `hitl.requested`, `hitl.approved`/`denied`/`timed_out`
-5. **Tool execution**: `tool.call.requested` → `tool.call.executed`/`failed`
+5. **Tool execution**: `tool.call.requested` then `tool.call.executed`/`failed`
 
 ### Context Mapping
-- `context.correlation_id` ← AEE correlation ID (primary linkage)
-- `context.aee_envelope_id`, `context.aee_message_id` ← AEE identifiers
-- `context.aocl_policy_id`, `context.aocl_decision_id` ← AOCL identifiers
-- `context.parent_event_id` ← for nested/causal flows
+- `context.correlation_id` from AEE correlation ID (primary linkage)
+- `context.aee_envelope_id`, `context.aee_message_id` from AEE identifiers
+- `context.aocl_policy_id`, `context.aocl_decision_id` from AOCL identifiers
+- `context.parent_event_id` for nested/causal flows
 
 ## Related Protocols
 
@@ -167,7 +167,7 @@ Custom types use vendor namespace prefix (e.g., `quox.marketplace.offer.created`
 
 | Version | Focus |
 |---------|-------|
-| v0.1 (current) | Record → Bundle → Verify |
+| v0.1 (current) | Record, Bundle, Verify |
 | v0.2 | Checkpointing, Merkle roots, conformance test vectors |
 | v0.3 | Replay fixtures, tool output recording |
 | v0.4 | Signed runner attestations, cross-signing, key management |
@@ -182,15 +182,15 @@ Custom types use vendor namespace prefix (e.g., `quox.marketplace.offer.created`
 - Explicit redaction flags (`payload.redacted: true`, `inputs_redacted: true`)
 
 **Threat mitigations:**
-- Post-hoc tampering → `EVENT_HASH_MISMATCH` detection
-- Event deletion → `CHAIN_BROKEN` / `SEQ_GAP` detection
-- Attachment substitution → `ATTACHMENT_HASH_MISMATCH` detection
-- Non-repudiation (v0.4+) → Ed25519 signatures from runners/orchestrators
+- Post-hoc tampering: `EVENT_HASH_MISMATCH` detection
+- Event deletion: `CHAIN_BROKEN` / `SEQ_GAP` detection
+- Attachment substitution: `ATTACHMENT_HASH_MISMATCH` detection
+- Non-repudiation (v0.4+): Ed25519 signatures from runners/orchestrators
 
 ## Invariants
 
 | Check | Status |
 |-------|--------|
-| `volt_version` required in all schemas | PASS |
-| All 4 JSON schemas valid (Draft 2020-12) | PASS |
+| `volt_version` required in event + manifest schemas (signature uses `sig_version`; optional in verification-report) | PASS |
+| All 4 JSON schemas valid (Draft 2020-12, parse clean) | PASS |
 | Example bundles populated | WARN (stubs only) |
