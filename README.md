@@ -1,12 +1,19 @@
-# VOLT — Verifiable Operations Ledger & Trace
+# VOLT: Verifiable Operations Ledger & Trace
 
 VOLT is Quox's **evidence layer**.
 
-It produces **tamper-evident, portable, verifiable traces** of what happened during an agent run — across agents, tools, approvals, and policy decisions — without turning your system into a logging swamp or leaking sensitive data.
+It produces **tamper-evident, portable, verifiable traces** of what happened during an agent run, across agents, tools, approvals, and policy decisions, without turning your system into a logging swamp or leaking sensitive data.
 
 If **AEE** is how agents communicate, and **AOCL** is how they're controlled, then **VOLT** is how you **prove** what actually happened.
 
-**IETF Internet-Draft:** [`draft-cowles-volt-00`](https://datatracker.ietf.org/doc/draft-cowles-volt/)
+**IETF Internet-Draft:** [`draft-cowles-volt`](https://datatracker.ietf.org/doc/draft-cowles-volt/)
+
+## The short version
+
+- **What:** a flight recorder for agent runs: a hash-chained event log you can export and verify.
+- **Who:** anyone who must prove to an auditor, a customer, or themselves what an AI system actually did.
+- **Why:** ordinary logs can be edited after the fact, so they prove nothing.
+- **How:** every action becomes an event, each event's hash links to the previous one, and runs export as portable Evidence Bundles anyone can verify offline.
 
 ---
 
@@ -54,7 +61,7 @@ VOLT (evidence ledger + bundle + verification)
 - **[AEE](https://github.com/quoxai/aee)**: message format + correlation IDs for agent-to-agent and human-to-agent envelopes.
 - **[AOCL](https://github.com/quoxai/aocl)**: orchestration control layers (policy decisions, permissions, HITL gates, escalation rules).
 - **VOLT**: evidence recording + integrity guarantees + exportable bundles + verification.
-- **[WARD](https://github.com/quoxai/ward)**: content-free hash-chain witnessing — produces tamper-evident receipts of VOLT events and bundles without storing their content. Signed WARD tips can be published to external sinks (Gitea tags, S3 Object Lock) for independent anchoring.
+- **[WARD](https://github.com/quoxai/ward)**: content-free hash-chain witnessing that produces tamper-evident receipts of VOLT events and bundles without storing their content. Signed WARD tips can be published to external sinks (Gitea tags, S3 Object Lock) for independent anchoring.
 
 ### VOLT explicitly does NOT
 - Replace AEE messaging
@@ -148,17 +155,17 @@ See: [SPEC.md](SPEC.md), [EVIDENCE_BUNDLES.md](EVIDENCE_BUNDLES.md), [VERIFICATI
 
 ## Documents
 
-- **[SPEC.md](SPEC.md)** — normative protocol spec (schema, hashing, chaining, versioning)
-- **[EVIDENCE_BUNDLES.md](EVIDENCE_BUNDLES.md)** — bundle layout, attachments, retention
-- **[VERIFICATION.md](VERIFICATION.md)** — verifier algorithm + report format
-- **[INTEGRATION.md](INTEGRATION.md)** — how VOLT hooks into AEE + AOCL + tool execution
-- **[PRIVACY_REDACTION.md](PRIVACY_REDACTION.md)** — logging safety + redaction rules
-- **[THREAT_MODEL.md](THREAT_MODEL.md)** — what VOLT mitigates and what it cannot
-- **[WORKED_EXAMPLES.md](WORKED_EXAMPLES.md)** — end-to-end sample runs
-- **[ROADMAP.md](ROADMAP.md)** — v0.2+ features and explicit non-goals
-- **[SECURITY.md](SECURITY.md)** — vulnerability reporting policy
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** — contribution guidelines
-- **[CHANGELOG.md](CHANGELOG.md)** — version history
+- **[SPEC.md](SPEC.md)**: normative protocol spec (schema, hashing, chaining, versioning)
+- **[EVIDENCE_BUNDLES.md](EVIDENCE_BUNDLES.md)**: bundle layout, attachments, retention
+- **[VERIFICATION.md](VERIFICATION.md)**: verifier algorithm + report format
+- **[INTEGRATION.md](INTEGRATION.md)**: how VOLT hooks into AEE + AOCL + tool execution
+- **[PRIVACY_REDACTION.md](PRIVACY_REDACTION.md)**: logging safety + redaction rules
+- **[THREAT_MODEL.md](THREAT_MODEL.md)**: what VOLT mitigates and what it cannot
+- **[WORKED_EXAMPLES.md](WORKED_EXAMPLES.md)**: end-to-end sample runs
+- **[ROADMAP.md](ROADMAP.md)**: v0.2+ features and explicit non-goals
+- **[SECURITY.md](SECURITY.md)**: vulnerability reporting policy
+- **[CONTRIBUTING.md](CONTRIBUTING.md)**: contribution guidelines
+- **[CHANGELOG.md](CHANGELOG.md)**: version history
 
 ---
 
@@ -177,4 +184,4 @@ The SDK repo is private today and **opening at launch**, together with the npm p
 
 **VOLT** stands for **Verifiable Operations Ledger & Trace**.
 
-It's a "flight recorder" for agentic workflows — with cryptographic integrity.
+It is a "flight recorder" for agentic workflows, with cryptographic integrity.
