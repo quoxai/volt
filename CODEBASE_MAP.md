@@ -4,7 +4,7 @@
 **Location:** `/home/control/repos/volt`
 **Remote:** `github.com/quoxai/volt`
 **Type:** Protocol specification (no runtime code, no build, no tests)
-**Version:** v0.1 (spec at 0.1.1 per CHANGELOG)
+**Version:** v0.1 (spec at 0.1.1 per CHANGELOG, both releases 2026-02-28)
 **IETF Draft:** [`draft-cowles-volt`](https://datatracker.ietf.org/doc/draft-cowles-volt/)
 
 ---
@@ -79,7 +79,7 @@ VOLT explicitly does NOT: replace AEE, decide policy, store secrets by default, 
 | 13-14 | Roadmap hooks (replay, TraceQL, attestations, anchoring); compliance notes |
 | 15-16 | Signature records (Ed25519, bundle scope); manifest schema details |
 | 17-18 | Streaming/rolling bundles; verifier output format |
-| 19-20 | Conformance levels; event type naming and registry rules |
+| 19-20 | Conformance levels (VOLT-R recorder, VOLT-B bundler, VOLT-V verifier); event type naming and registry rules |
 | 21-23 | Security/privacy requirements; AEE/AOCL compatibility notes (bridge is opt-in observer, failures MUST NOT disrupt transport); spec change policy |
 
 ---
@@ -87,7 +87,7 @@ VOLT explicitly does NOT: replace AEE, decide policy, store secrets by default, 
 ## JSON Schemas (`schemas/`, Draft 2020-12)
 
 ### `event.schema.json` (SPEC section 6)
-Required: `volt_version`, `event_id`, `run_id`, `ts` (ISO 8601 UTC Z), `seq` (monotonic from 1), `event_type` (dotted path), `actor` (`actor_type`: agent/human/system/tool/runner + `actor_id`), `context` (`correlation_id` required; optional `parent_event_id`, `aee_envelope_id`, `aee_message_id`, `aocl_policy_id`, `aocl_decision_id`, `workspace_id`, `project_id`, `tags`), `payload` (metadata-only in v0.1), `prev_hash`, `hash`.
+Required (all 11 fields, no optional top-level props): `volt_version`, `event_id`, `run_id`, `ts` (ISO 8601 UTC Z), `seq` (monotonic from 1), `event_type` (dotted path), `actor` (`actor_type`: agent/human/system/tool/runner + `actor_id`), `context` (`correlation_id` required; optional `parent_event_id`, `aee_envelope_id`, `aee_message_id`, `aocl_policy_id`, `aocl_decision_id`, `workspace_id`, `project_id`, `tags`), `payload` (metadata-only in v0.1), `prev_hash`, `hash`.
 
 ### `manifest.schema.json` (SPEC sections 10, 16)
 Required: `volt_version`, `bundle_id`, `run_id`, `created_ts`, `hash_alg` (`sha256`), `events_file`, `event_count`, `first_event_hash`, `last_event_hash`.
@@ -97,7 +97,7 @@ Optional: `bundle_mode` (rolling/final), `cutoff_ts`, `correlation_id`, `produce
 Required: `sig_version`, `sig_type` (`ed25519` only in v0.1), `key_id` (DID or fingerprint), `signed_ts`, `scope` (`bundle` only in v0.1), `message` (run_id, bundle_id, hash_alg, first/last event hash, event_count), `signature` (Base64).
 
 ### `verification-report.schema.json` (SPEC section 18)
-Result is `PASS` (exit 0), `FAIL` (exit 1, with `reason` code), or `ERROR` (exit 2, IO/parse). Failure reason codes: `MANIFEST_MISSING`, `MANIFEST_UNREADABLE`, `MANIFEST_SCHEMA_INVALID`, `EVENTS_FILE_MISSING`, `INVALID_EVENT_JSON`, `EVENT_SCHEMA_INVALID`, `VERSION_MISMATCH`, `RUN_ID_MISMATCH`, `SEQ_NOT_MONOTONIC`, `SEQ_DUPLICATE`, `SEQ_GAP`, `EVENT_HASH_MISMATCH`, `INVALID_GENESIS_PREV_HASH`, `CHAIN_BROKEN`, `MANIFEST_MISMATCH`, `ATTACHMENT_MISSING`, `ATTACHMENT_HASH_MISMATCH`, `SIGNATURE_SCHEMA_INVALID`, `SIGNATURE_INVALID`, `UNSUPPORTED_SIGNATURE_TYPE`.
+A `oneOf` over three result shapes: `PASS` (exit 0; run/bundle ids, hashes, counts, `warnings[]`), `FAIL` (exit 1; requires `reason` code + optional `details`), `ERROR` (exit 2, IO/parse). Failure reason codes: `MANIFEST_MISSING`, `MANIFEST_UNREADABLE`, `MANIFEST_SCHEMA_INVALID`, `EVENTS_FILE_MISSING`, `INVALID_EVENT_JSON`, `EVENT_SCHEMA_INVALID`, `VERSION_MISMATCH`, `RUN_ID_MISMATCH`, `SEQ_NOT_MONOTONIC`, `SEQ_DUPLICATE`, `SEQ_GAP`, `EVENT_HASH_MISMATCH`, `INVALID_GENESIS_PREV_HASH`, `CHAIN_BROKEN`, `MANIFEST_MISMATCH`, `ATTACHMENT_MISSING`, `ATTACHMENT_HASH_MISMATCH`, `SIGNATURE_SCHEMA_INVALID`, `SIGNATURE_INVALID`, `UNSUPPORTED_SIGNATURE_TYPE`.
 
 ---
 
@@ -169,4 +169,4 @@ License: Apache-2.0
 
 ---
 
-**Last updated:** 2026-09-02 (auto-generated codebase map)
+**Last updated:** 2026-09-05 (auto-generated codebase map)
