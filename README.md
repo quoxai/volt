@@ -1,5 +1,7 @@
 # VOLT: Verifiable Operations Ledger & Trace
 
+![Quox project overview](docs/assets/readme-hero.png)
+
 VOLT is Quox's **evidence layer**.
 
 It produces **tamper-evident, portable, verifiable traces** of what happened during an agent run, across agents, tools, approvals, and policy decisions, without turning your system into a logging swamp or leaking sensitive data.
