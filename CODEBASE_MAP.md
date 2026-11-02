@@ -1,4 +1,4 @@
-<!-- Last verified: 2026-10-30 by /codebase-mirror -->
+<!-- Last verified: 2026-11-02 by /codebase-mirror -->
 
 # VOLT Codebase Map
 
@@ -20,12 +20,15 @@ VOLT (Verifiable Operations Ledger & Trace) is Quox's evidence layer: a SHA-256 
 |--------|-------|
 | Files tracked (excluding `.git`) | 21 |
 | JSON Schemas (Draft 2020-12) | 4 |
-| Spec and supporting docs (markdown) | 12 (4,066 lines total incl. schemas and this map) |
+| Spec and supporting docs (markdown) | 12 (4,082 lines total incl. schemas and this map) |
 | Normative SPEC sections | 23 (821 lines) |
 | Standard event types (SPEC 8) | 24 across 7 namespaces |
+| Minimal required event examples (SPEC 12) | 8 |
 | Verifier FAIL reason codes | 20 (schema enum matches VERIFICATION.md section 7) |
 | Verifier report shapes | 3 (PASS, FAIL, ERROR) |
 | Conformance levels | 3 (VOLT-R, VOLT-B, VOLT-V) |
+| Threats modelled | 10 (T1-T6 mitigated, T7-T10 not fully) |
+| Worked examples | 4 (incl. one tampering FAIL) |
 | Example bundles | 0 (two `.gitkeep` placeholders) |
 | Entry points / routes / services / tests | 0 (spec-only repo) |
 
@@ -42,7 +45,7 @@ volt/
 ├── THREAT_MODEL.md          # Threats T1-T10: what VOLT mitigates and what it cannot
 ├── WORKED_EXAMPLES.md       # Four end-to-end sample runs, including a tampering FAIL
 ├── ROADMAP.md               # v0.2 to v1.0, explicit non-goals
-├── SECURITY.md              # Vulnerability reporting policy
+├── SECURITY.md              # Vulnerability reporting policy, safe harbor
 ├── CONTRIBUTING.md          # Ground rules, change process, definition of done
 ├── CHANGELOG.md             # 0.1.0, 0.1.1
 ├── LICENSE                  # Apache-2.0
@@ -89,6 +92,7 @@ volt/
 | FAIL reason codes in schema match VERIFICATION.md | ✓ pass | 20 codes in both |
 | Example bundles present | ⚠ warn | `examples/simple-run` and `examples/hitl-run` are `.gitkeep` placeholders only |
 | CHANGELOG version matches README/SPEC | ✓ pass | SPEC header says v0.1, CHANGELOG top is 0.1.1 (patch) |
+| Content drift since last map (2026-10-30) | ✓ none | Only CODEBASE_MAP.md changed in that window |
 
 ## Core Model
 
@@ -155,17 +159,30 @@ SHA-256 only, lowercase 64-hex. Each event is hashed over its canonical form wit
 
 ## Bundles and Verification
 
-Bundle layout (EVIDENCE_BUNDLES.md section 4): required `manifest.json` and `events.ndjson`; optional `attachments/` (content-addressed, sharded by two-char hash prefix), `signatures/`, `redactions/redactions.json`, `notes/`. Portable as folder or zip, rolling or final mode.
+Bundle layout (EVIDENCE_BUNDLES.md section 4): required `manifest.json` and `events.ndjson`; optional `attachments/` (content-addressed, sharded by two-char hash prefix), `signatures/`, `redactions/redactions.json`, `notes/`. Portable as folder or zip, rolling or final mode (section 10). Thirteen sections end with a minimal implementation checklist (section 13).
 
 Verifier algorithm (VERIFICATION.md section 5, steps 0-10): load bundle, load events, ordering, required fields, version compatibility, recompute hashes, chain, `run_id` consistency, manifest counts and endpoints, attachments, signatures. Strict mode (audit) fails on any deviation; permissive mode (dev) warns on seq gaps when the chain is intact. Suggested CLI: `volt-verify <bundle> [--strict] [--no-attachments] [--report json|text]`.
 
 ## Integration Points (INTEGRATION.md)
 
-Mandatory evidence points (section 3): run lifecycle, AEE envelope boundaries, AOCL policy decisions, HITL lifecycle, tool execution (the most important). Context mappings (section 4): `context.correlation_id` from AEE/AOCL `correlation_id`; `context.aee_envelope_id` / `aee_message_id` from AEE; `context.aocl_policy_id` / `aocl_decision_id` from AOCL; `parent_event_id` for parent/child. Pseudocode interfaces (section 6): `VoltRecorder`, `VoltBundler`, `VoltVerifier`. The bridge is an opt-in observer and MUST NOT disrupt the AEE transport on failure (SPEC 22).
+Mandatory evidence points (section 3): run lifecycle, AEE envelope boundaries, AOCL policy decisions, HITL lifecycle, tool execution (the most important). Context mappings (section 4): `context.correlation_id` from AEE/AOCL `correlation_id`; `context.aee_envelope_id` / `aee_message_id` from AEE; `context.aocl_policy_id` / `aocl_decision_id` from AOCL; `parent_event_id` for parent/child. Pseudocode interfaces (section 6): `VoltRecorder`, `VoltBundler`, `VoltVerifier`. Lifecycle emit map (section 7), privacy-first payload guidance per integration (section 8), QuoxCORE integration checklist (section 10). The bridge is an opt-in observer and MUST NOT disrupt the AEE transport on failure (SPEC 22).
+
+## Privacy and Redaction (PRIVACY_REDACTION.md)
+
+Non-negotiables (section 2) are normative: never log secrets, raw tool output or model content by default. Data classification (section 3), safe-default fields (section 4), never-log list (section 5), redaction strategies (section 6), secret scanning enforcement (section 7), export safety rules (section 9), recommended AOCL policies for VOLT safety (section 10).
 
 ## Threat Model (THREAT_MODEL.md)
 
-Mitigated in v0.1: T1 post-hoc tampering, T2 middle deletion, T3 fake insertion, T4 attachment substitution, T5 repudiation (partial), T6 silent redaction. Not fully mitigated: T7 fully compromised host, T8 key theft, T9 incomplete coverage, T10 privacy leakage via bundles.
+Mitigated in v0.1: T1 post-hoc tampering, T2 middle deletion, T3 fake insertion, T4 attachment substitution, T5 repudiation (partial), T6 silent redaction. Not fully mitigated: T7 fully compromised host, T8 key theft, T9 incomplete coverage, T10 privacy leakage via bundles. Sections 7-10 cover recommended controls, residual risk, roadmap threats and a deployment checklist.
+
+## Worked Examples (WORKED_EXAMPLES.md)
+
+1. Read-only tool call, no HITL.
+2. Production write gated by policy and HITL.
+3. Multi-agent workflow with a tool failure (incident reconstruction).
+4. Tampering detection: what a FAIL report looks like.
+
+Plus reference bundle folder layouts. These are prose and JSON excerpts; `examples/` holds no real bundles yet.
 
 ## Roadmap (ROADMAP.md)
 
@@ -178,7 +195,7 @@ Mitigated in v0.1: T1 post-hoc tampering, T2 middle deletion, T3 fake insertion,
 | v0.5 | TraceQL / query layer |
 | v1.0 | Stable standard, certification tiers, marketplace integration |
 
-Non-goals: not a SIEM, not an observability stack, not a policy engine, not an analytics database, no blockchain requirement.
+Guiding rule: keep v0.1 sacred (additive changes only). Non-goals: not a SIEM, not an observability stack, not a policy engine, not an analytics database, no blockchain requirement.
 
 ## Read Order
 
