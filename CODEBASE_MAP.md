@@ -1,4 +1,4 @@
-<!-- Last verified: 2026-11-03 by /codebase-mirror -->
+<!-- Last verified: 2026-11-04 by /codebase-mirror -->
 
 # VOLT Codebase Map
 
@@ -20,7 +20,7 @@ VOLT (Verifiable Operations Ledger & Trace) is Quox's evidence layer: a SHA-256 
 |--------|-------|
 | Files tracked (excluding `.git`) | 21 |
 | JSON Schemas (Draft 2020-12) | 4 |
-| Spec and supporting docs (markdown) | 12 (3,895 lines incl. schemas, excluding this map) |
+| Spec and supporting docs (markdown) | 12 (3895 lines incl. schemas, excluding this map) |
 | Normative SPEC sections | 23 (821 lines) |
 | Standard event types (SPEC 8) | 24 across 7 namespaces |
 | Minimal required event examples (SPEC 12) | 8 |
@@ -92,7 +92,7 @@ volt/
 | FAIL reason codes in schema match VERIFICATION.md | ✓ pass | 20 codes in both |
 | Example bundles present | ⚠ warn | `examples/simple-run` and `examples/hitl-run` are `.gitkeep` placeholders only |
 | CHANGELOG version matches README/SPEC | ✓ pass | SPEC header says v0.1, CHANGELOG top is 0.1.1 (patch) |
-| Content drift since last map (2026-11-02) | ✓ none | Last content commit 2026-10-22; only CODEBASE_MAP.md has changed since |
+| Content drift since last map (2026-11-03) | ✓ none | Last content commit 2026-10-22 (hero artwork); only CODEBASE_MAP.md has changed since |
 
 ## Core Model
 
